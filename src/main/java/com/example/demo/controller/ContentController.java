@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Content;
-import com.example.demo.repository.ContentCollectionRepository;
+import com.example.demo.model.Status;
+import com.example.demo.repository.ContentRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/content")
 public class ContentController {
-    private final ContentCollectionRepository repository;
+    private final ContentRepository repository;
 
 
     @Autowired // auto-wired constructor -> get the repository bean automatically
-    public ContentController(ContentCollectionRepository repository) {
+    public ContentController(ContentRepository repository) {
         this.repository = repository;
     }
 
@@ -63,4 +64,13 @@ public class ContentController {
         repository.deleteById(id);
     }
 
+    @GetMapping("/filter/{keyword}")
+    public List<Content> findByTitle(@PathVariable String keyword) {
+        return repository.findAllByTitleContains(keyword);
+    }
+
+    @GetMapping("/filter/status/{status}")
+    public List<Content> findByStatus(@PathVariable String status) {
+        return repository.listByStatus(Status.valueOf(status));
+    }
 }
